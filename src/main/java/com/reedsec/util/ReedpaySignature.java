@@ -1,8 +1,6 @@
 package com.reedsec.util;
 
-import com.google.gson.Gson;
 import com.reedsec.Reedpay;
-import com.reedsec.model.NotifyData;
 import org.apache.commons.codec.binary.Base64;
 import org.json.JSONObject;
 import sun.security.util.DerInputStream;
@@ -20,6 +18,8 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.RSAPrivateCrtKeySpec;
 import java.util.*;
+
+//import org.json.JSONObject;
 
 
 public class ReedpaySignature {
@@ -209,9 +209,9 @@ public class ReedpaySignature {
                 return (o1.getKey().toString().compareTo(o2.getKey()));
             }
         });
-//        if(Reedpay.DEBUG){
-//            System.out.println("排序后的参数为："+infos);
-//        }
+        if(Reedpay.DEBUG){
+            System.out.println("排序后的参数为："+infos);
+        }
         StringBuilder queryStringBuffer = new StringBuilder();
         int length = infos.size();
         for (int i = 0; i < length; i++) {
@@ -221,6 +221,9 @@ public class ReedpaySignature {
             queryStringBuffer.append(infos.get(i));
         }
         queryStringBuffer.append(Reedpay.privateKey);
+//        if(Reedpay.DEBUG) {
+            System.out.println("签名前原串：" + queryStringBuffer);
+//        }
         String sign = ReedpaySignature.MD5_lowCase(queryStringBuffer.toString());
         return sign;
     }
@@ -230,28 +233,40 @@ public class ReedpaySignature {
      */
     public static String get_signWithJson(JSONObject json){
         Map<String,Object> json_map = new HashMap<String, Object>();
-        int size = json.length();
-        if(json.has("data")){
-            for (int i = 0; i < size; i++) {
-                json_map.put("timestamp",json.getString("timestamp"));
-                json_map.put("retry",json.getString("retry"));
-                json_map.put("type",json.getString("type"));
-                json_map.put("data",json.getJSONObject("data"));
+//        int size = json.length();
+//        if(json.has("data")){
+//            //data去null
+//            JSONObject data = json.getJSONObject("data");
+//            Gson gson = new Gson();
+//
+//            NotifyData notifyData = gson.fromJson(data.toString(),NotifyData.class);
+//            ObjectMapper mapper = new ObjectMapper();
+//            mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+//            try {
+//                String outJson = mapper.writeValueAsString(notifyData);
+//                json_map.put("data",outJson);
+//            } catch (JsonProcessingException e) {
+//                e.printStackTrace();
+//            }
+//                json_map.put("timestamp",json.get("timestamp"));
+//                json_map.put("retry",json.get("retry"));
+//                json_map.put("type",json.get("type"));
+//
+//        }else{
+            Iterator it = json.keys();
+            while (it.hasNext())
+            {
+                String key = String.valueOf(it.next());
+                Object value = (Object) json.get(key);
+                json_map.put(key, value);
             }
-        }else{
-            json.put("credential",json.getJSONObject("credential"));
-            json.put("extra",json.getJSONObject("extra"));
-            Gson gson = new Gson();
-            NotifyData data = gson.fromJson(json.toString(), NotifyData.class);
-            json_map = transBean2Map(data);
 
-        }
+//        }
         System.out.println("-------------->"+json_map);
 
         String sign = get_signWithMap(json_map);
         return  sign;
     }
-
 
 
     public static Map<String, Object> transBean2Map(Object obj) {
@@ -282,6 +297,37 @@ public class ReedpaySignature {
 
         return map;
 
+    }
+
+
+    public static boolean getsign(String boby){
+        JSONObject json_data = new JSONObject(boby);
+        String sign_type = json_data.getString("sign_type");
+        String sign = json_data.getString("sign");
+        if(Reedpay.DEBUG){
+            System.out.println("签名类型为："+sign_type);
+            System.out.println("签名为："+sign);
+        }
+        //去掉签名类型和签名字段
+        json_data.remove("sign_type");
+        json_data.remove("sign");
+
+        String sign_varify = ReedpaySignature.get_signWithJson(json_data);
+        if (Reedpay.DEBUG){
+            System.out.println("数据加签后的签名："+sign_varify);
+        }
+
+        if (sign.equals(sign_varify)) {
+            if (Reedpay.DEBUG) {
+                System.out.println("验签结果：通过");
+            }
+            return true;
+        } else {
+            if (Reedpay.DEBUG) {
+                System.out.println("验签结果：失败");
+            }
+            return  false;
+        }
     }
 
 }

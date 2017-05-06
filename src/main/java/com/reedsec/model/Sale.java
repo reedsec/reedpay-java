@@ -5,12 +5,13 @@ import com.reedsec.exception.*;
 import com.reedsec.net.APIResource;
 import com.reedsec.util.ReedpaySignature;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
  * Created by lik@reedsec.com on 2017/4/7 0007.
  */
-public class Sale extends APIResource{
+public class Sale extends APIResource implements Serializable {
 
     String timestamp ;
     String result_code;
@@ -36,8 +37,10 @@ public class Sale extends APIResource{
     String paid;
     String refunded;
 
-    Map<String, Object> extra;
-    Map<String ,Object> credential;
+    String  extra;
+//    Map<String ,Object> credential;
+    String  credential;
+
 
     public String getOrder_no() {
         return order_no;
@@ -223,19 +226,19 @@ public class Sale extends APIResource{
         this.channel_trade_no = channel_trade_no;
     }
 
-    public Map<String, Object> getExtra() {
+    public String getExtra() {
         return extra;
     }
 
-    public void setExtra(Map<String, Object> extra) {
+    public void setExtra(String extra) {
         this.extra = extra;
     }
 
-    public Map<String, Object> getCredential() {
+    public String getCredential() {
         return credential;
     }
 
-    public void setCredential(Map<String, Object> credential) {
+    public void setCredential(String credential) {
         this.credential = credential;
     }
 
@@ -258,8 +261,14 @@ public class Sale extends APIResource{
         String sign = ReedpaySignature.get_signWithMap(params);
         params.put("sign_type","MD5");
         params.put("sign", sign);//MD5加密后转为小写
-        return request(RequestMethod.POST, Reedpay.getApiBase(), params, Sale.class);
+        if(Reedpay.DEBUG){
+            System.out.println("加密sign值："+sign);
+            System.out.println("请求参数："+params);
+        }
+        return request(RequestMethod.POST, Reedpay.getApiBase()+"sale", params, Sale.class);
     }
+
+
 
     /**
      * 查询 Sale
@@ -276,7 +285,7 @@ public class Sale extends APIResource{
     public static Sale query(String id) throws AuthenticationException,
             InvalidRequestException, APIConnectionException,
             APIException, ChannelException, RateLimitException {
-        return request(RequestMethod.GET, Reedpay.getApiBase()+"/"+id, null, Sale.class);
+        return request(RequestMethod.GET, Reedpay.getApiBase()+"sale/"+id, null, Sale.class);
     }
 
 
@@ -295,7 +304,7 @@ public class Sale extends APIResource{
     public static SaleList retrieve(Map<String, Object> params)
             throws AuthenticationException, InvalidRequestException,
             APIConnectionException, APIException, ChannelException, RateLimitException {
-        return request(RequestMethod.GET, Reedpay.getApiBase(), params, SaleList.class);
+        return request(RequestMethod.GET, Reedpay.getApiBase()+"sale", params, SaleList.class);
         }
 
 }

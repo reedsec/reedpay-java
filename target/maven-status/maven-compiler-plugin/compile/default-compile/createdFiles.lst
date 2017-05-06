@@ -22,4 +22,5 @@ com\reedsec\exception\APIException.class
 com\reedsec\util\ReedpaySignature.class
 com\reedsec\net\APIResource$Error.class
 com\reedsec\model\Fail.class
+com\reedsec\model\Transfer.class
 com\reedsec\net\APIResource.class

@@ -5,13 +5,21 @@ package com.reedsec;
  */
 public abstract class Reedpay {
     /**
-     * Reedpay API BASE URL
+     * 内测域名
      */
-    public static final String LIVE_API_BASE = "https://reedpay-a2.reedsec.com";
+//    public static final String LIVE_API_BASE = "https://reedpay-a2.reedsec.com";
+    /**
+     * 外侧域名
+     */
+    public static final String LIVE_API_BASE = "https://paydev.reedsec.com";
+    /**
+     * 正式域名
+     */
+//    public static final String LIVE_API_BASE = "https://pay.reedsec.com";
     /**
      * interface url
      */
-    public static  String INTERFACE_URL = "/secapi/v2/sale";
+    public static  String INTERFACE_URL = "/secapi/v2/";
 
     /**
      * version
@@ -31,7 +39,7 @@ public abstract class Reedpay {
     private static volatile boolean verifySSL = true;
     private static volatile String apiBase = LIVE_API_BASE+INTERFACE_URL;
 
-    public static volatile String privateKey = "reedsec_secret";
+    public static volatile String privateKey = "reedsec_secert";
 
     public static Boolean DEBUG = false;
 

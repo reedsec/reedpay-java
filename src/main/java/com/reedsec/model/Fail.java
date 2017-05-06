@@ -1,9 +1,11 @@
 package com.reedsec.model;
 
+import java.io.Serializable;
+
 /**
  * Created by lik@reedsec.com on 2017/4/11 0011.
  */
-public class Fail {
+public class Fail implements Serializable {
     String timestamp;
     String result_code;
     String err_code;

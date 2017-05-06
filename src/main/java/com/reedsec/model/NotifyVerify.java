@@ -1,12 +1,16 @@
 package com.reedsec.model;
 
+import com.reedsec.Reedpay;
 import com.reedsec.net.APIResource;
-import com.reedsec.util.ReedpaySignature;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.reedsec.util.ReedpaySignature.get_signWithMap;
 
 /**
  * Created by lik@reedsec.com on 2017/4/13 0013.
@@ -99,30 +103,51 @@ public class NotifyVerify extends APIResource{
         return sb.toString();
     }
 
-    //测试加签验签
+
+    /**
+     * 消息异步通知验签
+     * @param body
+     */
+    public static boolean verify_signature(String body){
+
+        JSONObject json_body = new JSONObject(body);
+        String sign_type = json_body.getString("sign_type");
+        String sign = json_body.getString("sign");
+        if(Reedpay.DEBUG){
+            System.out.println("签名类型为："+sign_type);
+            System.out.println("签名为："+sign);
+        }
+        Map<String,Object> json_map = new HashMap<String, Object>();
+
+            json_map.put("data",json_body.get("data"));
+            json_map.put("timestamp",json_body.get("timestamp"));
+            json_map.put("retry",json_body.get("retry"));
+            json_map.put("type",json_body.get("type"));
+
+
+        String sign_varify = get_signWithMap(json_map);
+        if (sign.equals(sign_varify)) {
+            if (Reedpay.DEBUG){
+                System.out.println("验签结果：通过");
+            }
+            return true;
+        } else {
+            if (Reedpay.DEBUG) {
+                System.out.println("验签结果：失败");
+            }
+            return false;
+        }
+    }
+
     public static void main(String[] args) throws Exception {
-        // 该数据由用户传入, 以下仅作为示例
         String webhooksRawPostData = getStringFromFile(eventPath);
         System.out.println("------- POST 原始数据 -------");
         System.out.println(webhooksRawPostData);
+        boolean b = verify_signature(webhooksRawPostData);
+        System.out.println(b);
 
-        JSONObject json_data = new JSONObject(webhooksRawPostData);
-        String sign_type = json_data.getString("sign_type");
-        System.out.println("签名类型为："+sign_type);
-        String sign = json_data.getString("sign");
-        System.out.println("签名为："+sign);
-        //去掉签名类型和签名字段
-        json_data.remove("sign_type");
-        json_data.remove("sign");
-
-        String sign_varify = ReedpaySignature.get_signWithJson(json_data);
-        System.out.println("数据加签后的签名："+sign_varify);
-
-        if (sign.equals(sign_varify)) {
-            System.out.println("验签结果：通过");
-        } else {
-            System.out.println("验签结果：失败");
-            return;
-        }
+//        String sign_sb = "data={\"transaction_id\":\"pay_26ava3dy66V1gxk5xprm9\",\"app_id\":\"app_58eb5a9d5b3e556a816a1b94\",\"order_no\":\"1020170427337062636653872001\",\"mch_order_no\":\"1493276271325\",\"amount\":1,\"subject\":\"test\",\"trade_type\":\"WX_QRCODE\",\"currency\":\"CNY\",\"channel_trade_no\":\"1021800776625170427000042645\",\"trade_status\":\"PAID\",\"time_created\":\"20170427145752\",\"time_expire\":\"20170428145752\",\"time_success\":\"20170427145817\",\"amount_refunded\":0,\"extra\":{\"client_ip\":\"127.0.0.1\",\"notify_url\":\"https://reedpay-a2.reedsec.com/api/v2/webhooks/reedpay\"},\"refunded\":false,\"paid\":false}&retry=0&timestamp=1493276297&type=SALETester01Secret";
+//        String sign = ReedpaySignature.MD5_lowCase(sign_sb);
+//        System.out.println(sign);
     }
 }

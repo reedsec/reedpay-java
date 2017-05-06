@@ -2,9 +2,9 @@ package com.reedsec.model;
 
 import com.reedsec.bean.ReedpayObject;
 
-import java.util.List;
+import java.io.Serializable;
 
-public abstract class ReedpayList<T> extends ReedpayObject {
+public abstract class ReedpayList<T> extends ReedpayObject implements Serializable {
 
     /**
      * reedpay 列表基础参数
@@ -12,7 +12,7 @@ public abstract class ReedpayList<T> extends ReedpayObject {
     String timestamp;
     String result_code;
     String type;
-    List<T> data;
+    String  data;
 
     public String getTimestamp() {
         return timestamp;
@@ -38,11 +38,11 @@ public abstract class ReedpayList<T> extends ReedpayObject {
         this.type = type;
     }
 
-    public List<T> getData() {
+    public String getData() {
         return data;
     }
 
-    public void setData(List<T> data) {
+    public void setData(String data) {
         this.data = data;
     }
 }

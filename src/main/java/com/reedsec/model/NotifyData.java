@@ -1,32 +1,33 @@
 package com.reedsec.model;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
  * Created by lik@reedsec.com on 2017/4/13 0013.
  */
-public class NotifyData {
+public class NotifyData implements Serializable {
     /**
      *消息通知 data 字段
      */
     String transaction_id;
     String order_no;
     String mch_extra;
-    String amount;
+    int amount;
     String time_expire;
     String subject;
     String time_success;
     String channel_trade_no;
-    String amount_refunded;
+    int amount_refunded;
     String refunds;
     String trade_status;
     Map<String, Object>  credential;
     Map<String, Object> extra;
-    String paid;
+    boolean paid;
     String trade_type;
     String time_created;
     String currency;
-    String refunded;
+    boolean refunded;
     String detail;
     String app_id;
     String mch_order_no;
@@ -55,12 +56,20 @@ public class NotifyData {
         this.mch_extra = mch_extra;
     }
 
-    public String getAmount() {
+    public int getAmount() {
         return amount;
     }
 
-    public void setAmount(String amount) {
+    public void setAmount(int amount) {
         this.amount = amount;
+    }
+
+    public int getAmount_refunded() {
+        return amount_refunded;
+    }
+
+    public void setAmount_refunded(int amount_refunded) {
+        this.amount_refunded = amount_refunded;
     }
 
     public String getTime_expire() {
@@ -95,12 +104,20 @@ public class NotifyData {
         this.channel_trade_no = channel_trade_no;
     }
 
-    public String getAmount_refunded() {
-        return amount_refunded;
+    public boolean isPaid() {
+        return paid;
     }
 
-    public void setAmount_refunded(String amount_refunded) {
-        this.amount_refunded = amount_refunded;
+    public void setPaid(boolean paid) {
+        this.paid = paid;
+    }
+
+    public boolean isRefunded() {
+        return refunded;
+    }
+
+    public void setRefunded(boolean refunded) {
+        this.refunded = refunded;
     }
 
     public String getRefunds() {
@@ -135,14 +152,6 @@ public class NotifyData {
         this.extra = extra;
     }
 
-    public String getPaid() {
-        return paid;
-    }
-
-    public void setPaid(String paid) {
-        this.paid = paid;
-    }
-
     public String getTrade_type() {
         return trade_type;
     }
@@ -165,14 +174,6 @@ public class NotifyData {
 
     public void setCurrency(String currency) {
         this.currency = currency;
-    }
-
-    public String getRefunded() {
-        return refunded;
-    }
-
-    public void setRefunded(String refunded) {
-        this.refunded = refunded;
     }
 
     public String getDetail() {

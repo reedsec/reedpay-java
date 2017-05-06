@@ -1,0 +1,8 @@
+{
+    "type": "SALE",
+    "data": "{\"transaction_id\":\"pay_26ava3dxsfO1gxl871yhd\",\"app_id\":\"app_58eb5a9d5b3e556a816a1b94\",\"order_no\":\"1020170427337062587177006001\",\"mch_order_no\":\"1493299439146\",\"amount\":1,\"subject\":\"test\",\"detail\":\"test\",\"trade_type\":\"WX_QRCODE\",\"currency\":\"CNY\",\"channel_trade_no\":\"1021800776625170427000042891\",\"trade_status\":\"PAID\",\"time_created\":\"20170427212326\",\"time_expire\":\"20170428212326\",\"time_success\":\"20170427212401\",\"amount_refunded\":0,\"extra\":{\"client_ip\":\"127.0.0.1\",\"notify_url\":\"http://likangchun.cn/reedsec/testnotify\"},\"refunded\":false,\"paid\":false}",
+    "retry": 0,
+    "timestamp": 1493299441,
+    "sign_type": "MD5",
+    "sign": "3ef1c8d2c9533ed0f4eda0d423dc082a"
+}

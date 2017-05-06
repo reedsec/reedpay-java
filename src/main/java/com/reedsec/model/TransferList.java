@@ -1,6 +1,6 @@
 package com.reedsec.model;
 
-public class SaleList extends ReedpayList<Sale> {
+public class TransferList extends ReedpayList<Transfer> {
 
     int total;
     int page;

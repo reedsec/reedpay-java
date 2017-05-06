@@ -12,6 +12,11 @@ SDK 需要 reedpay 提供的 apiKey 和 AppID 作为凭证获取移动端支付�
  Reedpay.appId = APP_ID;
  //设置是否开启调试模式，调试模式会有部分日志输出。默认为false
  Reedpay.DEBUG = true;
+ //初始化加密的秘钥
+ Reedpay.privateKey = "Secret";
+ //初始化请求地址，默认使用瑞赛sdk提供的地址。
+ Reedpay.setApiBase("server_url");
+ 
 ```
 
 ##### 创建 Sale
@@ -23,11 +28,11 @@ create(Map<String, Object> params)
 参数：Map  
 返回：Sale  
 示例：
-```java
-	Map<String, Object> SaleMap = new HashMap<String, Object>();
+
+Map<String, Object> SaleMap = new HashMap<String, Object>();
 	// 某些渠道需要添加extra参数，具体参数详见接口文档
 	SaleMap.put("amount", 100);
-	SaleMap.put("currency", "CNY");
+	SaleMap.put("currency", "CNY");_``_
 	SaleMap.put("subject", "test");
 	SaleMap.put("body", "test");
 	SaleMap.put("order_no", "123456789");
@@ -37,16 +42,16 @@ create(Map<String, Object> params)
 	extra_json.put("client_ip","127.0.0.1");// 发起支付请求客户端的 IP 地址，格式为 IPV4，如: 127.0.0.1
 	//extra_json.put("auth_code","130164458163232562");
 	saleMap.put("extra", extra_json.toString());
-	try { 
+	try {
 		// 发起 sale 创建请求
-		Sale sale = Sale.create(saleMap);   
+		Sale sale = Sale.create(saleMap);
 		// 传到客户端请先转成字符串 .toString(), 调该方法，会自动转成正确的 JSON 字符串
 		String saleString = sale.toString();
 		System.out.println(saleString);
 	} catch (Exception e) {
 		e.printStackTrace();
 	}
-```
+
 
 ##### 备注 请求参数
 字段名	            变量名	        必填	 类型	       说明
@@ -110,7 +115,7 @@ retrieve(Map<String, Object> params)
         amount_json.put("gte","1");
         params.put("amount",amount_json);
 		SaleList saleList = Sale.retrieve(params);
-
+```
 
 	###查询参数
 	字段名				变量名			必填		类型			说明
@@ -137,3 +142,14 @@ retrieve(Map<String, Object> params)
 	大于等于金额	gte		N		Number	返回大于等于金额的交易记录
 	小于金额		lt		N		Number	返回小于金额的交易记录
 	小于等于金额	lte		N		Number	返回小于等于金额的交易记录
+
+
+##### 签名验证
+verify_signature(String body)
+方法名：verify_signature
+类型：实例方法
+参数：String  回调地址收到的消息
+返回：boolean (true表示验签成功，flase表示验签失败)
+示例：
+ boolean b = NotifyVerify.verify_signature(body);
+

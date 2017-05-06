@@ -1,5 +1,8 @@
 package com.reedsec.net;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -7,6 +10,7 @@ import com.reedsec.Reedpay;
 import com.reedsec.bean.ReedpayObject;
 import com.reedsec.exception.*;
 import com.reedsec.model.Fail;
+import com.reedsec.model.Sale;
 import com.reedsec.util.ReedpaySignature;
 import org.json.JSONObject;
 
@@ -57,7 +61,7 @@ public abstract class APIResource extends ReedpayObject {
 
     public static Gson getGson() {
         try {
-            Class<?> klass = Class.forName("com.reedsec.net.AppBasedResource");
+            Class<?> klass = Class.forName("com.reedsec.net.APIResource");
             Field field = klass.getField("GSON");
             return (Gson) field.get(klass);
         } catch (ClassNotFoundException e) {
@@ -162,9 +166,8 @@ public abstract class APIResource extends ReedpayObject {
             apiKey = Reedpay.apiKey;
         }
 
-//        headers.put("Authorization", String.format("Bearer %s", apiKey));
-//        headers.put("Authorization", "Basic c2tfdGVzdF9kMGE2ZTNhN2Y0YWNiOWI0ZWU0ZTA2MGIwMGIzMmQyODo=");
         headers.put("Authorization", "Basic "+ ReedpaySignature.encode((apiKey+":").getBytes()));
+        //System.out.println("Authorization :"+"Basic "+ ReedpaySignature.encode((apiKey+":").getBytes()));
         headers.put("Accept-Language", Reedpay.AcceptLanguage);
         headers.put("Accept","application/json");
         if (Reedpay.apiVersion != null) {
@@ -565,7 +568,6 @@ public abstract class APIResource extends ReedpayObject {
                 query = createJSONString(params);
                 break;
         }
-
         ReedpayResponse response;
         try {
             // HTTPSURLConnection verifies SSL cert by default
@@ -581,11 +583,11 @@ public abstract class APIResource extends ReedpayObject {
         if(Reedpay.DEBUG){
             System.out.println("返回的body:"+ rBody);
         }
+        JSONObject body_json = new JSONObject(rBody);
 
         if (rCode < 200 || rCode >= 300) {
             handleAPIError(rBody, rCode);
         }
-        JSONObject body_json = new JSONObject(rBody);
         String result_code = null;
         if(body_json.has("result_code")){
             result_code = body_json.getString("result_code");
@@ -593,7 +595,38 @@ public abstract class APIResource extends ReedpayObject {
         if(!result_code.equals("SUCCESS")){
             handleAPIFail(rBody);
         }
-        return getGson().fromJson(rBody, clazz);
+
+        //对返回数据验签
+        if(body_json.has("sign_type") && body_json.has("sign")){
+            try {
+
+                if(body_json.has("credential") && body_json.get("credential") != null){
+
+                    body_json.put("credential",body_json.get("credential"));
+                }
+                if(body_json.has("extra") && body_json.get("extra") != null){
+
+                    body_json.put("extra",body_json.get("extra"));
+                }
+                if(body_json.has("mch_extra") && !body_json.get("mch_extra").equals(null)){
+
+                    body_json.put("mch_extra",body_json.get("mch_extra"));
+                }
+
+                Gson gson = new Gson();
+                Sale sale_date = gson.fromJson(body_json.toString(),Sale.class);
+                ObjectMapper mapper = new ObjectMapper();
+                mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+                String outJson = mapper.writeValueAsString(sale_date);
+                boolean sign_istrue = ReedpaySignature.getsign(outJson);
+                if(!sign_istrue){
+                    System.out.println("数据验证签名失败！");
+                }
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
+        return getGson().fromJson(body_json.toString(), clazz);
     }
 
     /**
