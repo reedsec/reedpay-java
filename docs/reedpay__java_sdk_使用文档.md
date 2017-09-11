@@ -29,41 +29,36 @@ create(Map<String, Object> params)
 返回：Sale  
 示例：
 
+```java
 Map<String, Object> SaleMap = new HashMap<String, Object>();
-	// 某些渠道需要添加extra参数，具体参数详见接口文档
-	SaleMap.put("amount", 100);
-	SaleMap.put("currency", "CNY");_``_
-	SaleMap.put("subject", "test");
-	SaleMap.put("body", "test");
-	SaleMap.put("order_no", "123456789");
-	SaleMap.put("channel", "WX_QRCODE");
-	saleMap.put("app_id", APP_ID);
-	JSONObject extra_json = new JSONObject();
-	extra_json.put("client_ip","127.0.0.1");// 发起支付请求客户端的 IP 地址，格式为 IPV4，如: 127.0.0.1
-	//extra_json.put("auth_code","130164458163232562");
-	saleMap.put("extra", extra_json.toString());
-	try {
-		// 发起 sale 创建请求
-		Sale sale = Sale.create(saleMap);
-		// 传到客户端请先转成字符串 .toString(), 调该方法，会自动转成正确的 JSON 字符串
-		String saleString = sale.toString();
-		System.out.println(saleString);
-	} catch (Exception e) {
-		e.printStackTrace();
-	}
-
+SaleMap.put("amount", 100);
+SaleMap.put("subject", "test");
+SaleMap.put("order_no", "123456789");
+SaleMap.put("trade_type", "WX_QRCODE");
+SaleMap.put("app_id", "app_5926ce6b6029dd6f89a90c62");
+JSONObject extra = new JSONObject();
+extra.put("client_ip","127.0.0.1");// 发起支付请求客户端的 IP 地址，格式为 IPV4
+SaleMap.put("extra", extra.toString());
+try {
+	// 发起 sale 创建请求
+	Sale sale = Sale.create(saleMap);
+} catch (Exception e) {
+	e.printStackTrace();
+}
+```
 
 ##### 备注 请求参数
-字段名	            变量名	        必填	 类型	       说明
-瑞赛支付平台的AppID	app_id	         Y	   String(32)	应用在瑞赛支付平台的唯一标识。例如：app_58e884950aba5c7fc39f7384
-商户的交易订单号	mch_order_no	 Y	   String(32)	商户后台生成的唯一订单号
-支付方式标识	    trade_type	     Y	   String(16)	支付方式标识码，取值和含义见后附
-付款金额(分)	     amount	         Y	     Number	    付款金额，以分为单位的整数
-订单标题	         subject	     Y	  String(256)	UFT8编码格式，256个ASCII字符或85个汉字 
-订单描述	         detail	         N	  String(1024)	UTF8编码格式，1024个ASCII字符或340个汉字
-货币类型	         currency	     N	   String(3)	货币类型，默认CNY（人民币）
-扩展参数	          extra	         Y	    JSON	    JSON字符串，支付请求的扩展参数
-商户的附加数据	      mch_extra	     N	   JSON	        商户自定义的参数，将会在异步通知中原样返回，主要用于携带订单附加信息
+|字段名	|            变量名	|        必填	| 类型	|       说明|
+|瑞赛支付平台的AppID|	app_id	 |        Y	 |  String(32)	|
+应用在瑞赛支付平台的唯一标识。例如：app_58e884950aba5c7fc39f7384 |
+|商户的交易订单号|	mch_order_no|	 Y	|   String(32)|	商户后台生成的唯一订单号|
+|支付方式标识	|    trade_type	|     Y	|   String(16)|	支付方式标识码，取值和含义见后附|
+|付款金额(分)	|     amount|	         Y	|     Number|	    付款金额，以分为单位的整数|
+|订单标题	|         subject|	     Y|	  String(256)|	UFT8编码格式，256个ASCII字符或85个汉字 |
+|订单描述	|         detail|	         N	|  String(1024)	|UTF8编码格式，1024个ASCII字符或340个汉字|
+|货币类型	 |        currency	|     N |	   String(3)|	货币类型，默认CNY（人民币）|
+|扩展参数	 |         extra|	         Y	|    JSON|	    JSON字符串，支付请求的扩展参数|
+|商户的附加数据|	      mch_extra	 |    N	|   JSON	 |       商户自定义的参数，将会在异步通知中原样返回，主要用于携带订单附加信息|
 
 支付请求扩展参数extra：
 字段名	                     变量名	      必填	   类型	         说明
