@@ -19,8 +19,8 @@ public class Balance extends APIResource {
     String timestamp;
     String app_id;
     String account_status;
-    int balance;
-    int quota;
+    String balance;
+    String quota;
     String err_code;
     String err_msg;
     String channel;
@@ -57,20 +57,20 @@ public class Balance extends APIResource {
         this.account_status = account_status;
     }
 
-    public int getQuota() {
-        return quota;
-    }
-
-    public void setQuota(int quota) {
-        this.quota = quota;
-    }
-
-    public int getBalance() {
+    public String getBalance() {
         return balance;
     }
 
-    public void setBalance(int balance) {
+    public void setBalance(String balance) {
         this.balance = balance;
+    }
+
+    public String getQuota() {
+        return quota;
+    }
+
+    public void setQuota(String quota) {
+        this.quota = quota;
     }
 
     public String getErr_code() {

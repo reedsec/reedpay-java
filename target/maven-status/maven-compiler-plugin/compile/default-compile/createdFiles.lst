@@ -1,3 +1,4 @@
+com\reedsec\model\RefundList.class
 com\reedsec\net\APIResource$ErrorContainer.class
 com\reedsec\exception\ChannelException.class
 com\reedsec\Reedpay.class
@@ -12,7 +13,9 @@ com\reedsec\net\APIResource$RequestMethod.class
 com\reedsec\net\ReedpayResponse.class
 com\reedsec\model\ReedpayList.class
 com\reedsec\model\NotifyVerify.class
+com\reedsec\model\TransferList.class
 com\reedsec\model\SaleList.class
+com\reedsec\model\Balance.class
 com\reedsec\bean\ReedpayObject.class
 com\reedsec\exception\APIConnectionException.class
 com\reedsec\exception\AuthenticationException.class
@@ -22,5 +25,7 @@ com\reedsec\exception\APIException.class
 com\reedsec\util\ReedpaySignature.class
 com\reedsec\net\APIResource$Error.class
 com\reedsec\model\Fail.class
+com\reedsec\util\Utils.class
 com\reedsec\model\Transfer.class
+com\reedsec\model\Refund.class
 com\reedsec\net\APIResource.class

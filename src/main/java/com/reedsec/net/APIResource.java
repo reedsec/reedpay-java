@@ -9,8 +9,9 @@ import com.google.gson.GsonBuilder;
 import com.reedsec.Reedpay;
 import com.reedsec.bean.ReedpayObject;
 import com.reedsec.exception.*;
-import com.reedsec.model.Fail;
+import com.reedsec.model.Refund;
 import com.reedsec.model.Sale;
+import com.reedsec.model.Transfer;
 import com.reedsec.util.ReedpaySignature;
 import org.json.JSONObject;
 
@@ -167,7 +168,7 @@ public abstract class APIResource extends ReedpayObject {
         }
 
         headers.put("Authorization", "Basic "+ ReedpaySignature.encode((apiKey+":").getBytes()));
-        //System.out.println("Authorization :"+"Basic "+ ReedpaySignature.encode((apiKey+":").getBytes()));
+        System.out.println("Authorization :"+"Basic "+ ReedpaySignature.encode((apiKey+":").getBytes()));
         headers.put("Accept-Language", Reedpay.AcceptLanguage);
         headers.put("Accept","application/json");
         if (Reedpay.apiVersion != null) {
@@ -588,13 +589,13 @@ public abstract class APIResource extends ReedpayObject {
         if (rCode < 200 || rCode >= 300) {
             handleAPIError(rBody, rCode);
         }
-        String result_code = null;
-        if(body_json.has("result_code")){
-            result_code = body_json.getString("result_code");
-        }
-        if(!result_code.equals("SUCCESS")){
-            handleAPIFail(rBody);
-        }
+//        String result_code = null;
+//        if(body_json.has("result_code")){
+//            result_code = body_json.getString("result_code");
+//        }
+//        if(!result_code.equals("SUCCESS")){
+//            handleAPIFail(rBody);
+//        }
 
         //对返回数据验签
         if(body_json.has("sign_type") && body_json.has("sign")){
@@ -614,10 +615,19 @@ public abstract class APIResource extends ReedpayObject {
                 }
 
                 Gson gson = new Gson();
-                Sale sale_date = gson.fromJson(body_json.toString(),Sale.class);
                 ObjectMapper mapper = new ObjectMapper();
                 mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-                String outJson = mapper.writeValueAsString(sale_date);
+                String outJson = null;
+                if(body_json.has("business_type") && body_json.has("batch_count")){//代付返回
+                    Transfer transfer = gson.fromJson(body_json.toString(),Transfer.class);
+                    outJson = mapper.writeValueAsString(transfer);
+                }else if(body_json.has("refund_id") && body_json.has("refund_amount")){
+                    Refund refund = gson.fromJson(body_json.toString(),Refund.class);
+                    outJson = mapper.writeValueAsString(refund);
+                }else{
+                    Sale sale_date = gson.fromJson(body_json.toString(),Sale.class);
+                    outJson = mapper.writeValueAsString(sale_date);
+                }
                 boolean sign_istrue = ReedpaySignature.getsign(outJson);
                 if(!sign_istrue){
                     System.out.println("数据验证签名失败！");
@@ -659,11 +669,11 @@ public abstract class APIResource extends ReedpayObject {
         }
     }
 
-    private static void handleAPIFail(String rBody) throws APIException {
-       Fail fail = getGson().fromJson(rBody,
-                Fail.class);
-        throw new APIException(fail.toString(), null);
-    }
+//    private static void handleAPIFail(String rBody) throws APIException {
+//       Fail fail = getGson().fromJson(rBody,
+//                Fail.class);
+//        throw new APIException(fail.toString(), null);
+//    }
 
     /**
      * 生成请求签名

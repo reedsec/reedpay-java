@@ -11,11 +11,11 @@ public abstract class Reedpay {
     /**
      * 外侧域名
      */
-    public static final String LIVE_API_BASE = "https://paydev.reedsec.com";
+//    public static final String LIVE_API_BASE = "https://paydev.reedsec.com";
     /**
      * 正式域名
      */
-//    public static final String LIVE_API_BASE = "https://pay.reedsec.com";
+    public static final String LIVE_API_BASE = "https://pay.reedsec.com";
     /**
      * interface url
      */

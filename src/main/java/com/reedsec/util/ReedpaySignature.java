@@ -221,9 +221,9 @@ public class ReedpaySignature {
             queryStringBuffer.append(infos.get(i));
         }
         queryStringBuffer.append(Reedpay.privateKey);
-//        if(Reedpay.DEBUG) {
+        if(Reedpay.DEBUG) {
             System.out.println("签名前原串：" + queryStringBuffer);
-//        }
+        }
         String sign = ReedpaySignature.MD5_lowCase(queryStringBuffer.toString());
         return sign;
     }
@@ -262,7 +262,6 @@ public class ReedpaySignature {
             }
 
 //        }
-        System.out.println("-------------->"+json_map);
 
         String sign = get_signWithMap(json_map);
         return  sign;
